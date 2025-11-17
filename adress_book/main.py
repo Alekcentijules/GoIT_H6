@@ -102,7 +102,8 @@ class Record:
         Args:
             phone (str): Phone number to remove.
         """
-        self.phones = [p for p in self.phones if p.value != phone]
+        find = self.find_phone(phone)
+        self.phones.remove(find)
 
     def edit_phone(self, old_phone: str, new_phone: str) -> None:
         """
@@ -118,17 +119,9 @@ class Record:
         if not any(p.value == old_phone for p in self.phones):
             raise ValueError("Old number not found.")
         
-        removed = False
-        new_phones = []
-        for p in self.phones:
-            if p.value == old_phone and not removed:
-                removed = True
-                continue
-            new_phones.append(p)
-
-        new_phones.append(Phone(new_phone))
-        self.phones = new_phones
-
+        self.remove_phone(old_phone)
+        self.phones.append(Phone(new_phone))
+        
     def find_phone(self, phone: str) -> Optional[Phone]:
         """
         Searches for a phone number in the contact list.
@@ -142,11 +135,6 @@ class Record:
         Raises:
             ValueError: If the number does not match the format (10 digits).
         """
-        if len(phone) != 10:
-            raise ValueError("The lenth of the telephon number must be 10 numbers.")
-        if not phone.isdigit():
-            raise ValueError("Value must consist of numbers.")
-        
         for p in self.phones:
             if p.value == phone:
                 return p
@@ -228,3 +216,4 @@ if __name__ == "__main__":
 
     book.delete('John')
     print(book)
+
